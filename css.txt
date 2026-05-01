@@ -1,0 +1,176 @@
+:root {
+            /* Theme Variables - Default Dark (Midnight Library) */
+            --bg-color: #1a1614;
+            --paper-color: #2c2420;
+            --ink-color: #e2d5c3;
+            --accent-color: #8b7355;
+            --border-color: #4a3f35;
+            --input-bg: #1f1a17;
+            --card-grad: linear-gradient(to bottom, #4a3f35, #2c2420);
+        }
+
+        /* Light Theme (Antique Manuscript) */
+        body.light-theme {
+            --bg-color: #e8e1d5;
+            --paper-color: #f4eee1;
+            --ink-color: #3e2f26;
+            --accent-color: #a67c52;
+            --border-color: #d2b48c;
+            --input-bg: #ffffff;
+            --card-grad: linear-gradient(to bottom, #d2b48c, #f4eee1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: url("https://www.transparenttextures.com/patterns/parchment.png");
+            color: var(--ink-color);
+            font-family: 'Crimson Pro', serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            transition: all 0.5s ease;
+        }
+
+        h1, .script-font {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* Calligraphic Buttons */
+        .vintage-btn {
+            background: var(--accent-color);
+            color: var(--paper-color);
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 0px var(--border-color);
+        }
+
+        .vintage-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px var(--border-color);
+            filter: brightness(1.1);
+        }
+
+        .vintage-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 0px 0px 0px var(--border-color);
+        }
+
+        /* Antique Inputs */
+        input[type="text"], input[type="date"], textarea {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding: 12px;
+            color: var(--ink-color);
+            width: 100%;
+            margin-top: 5px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        /* Scholar Cards */
+        .card {
+            background: var(--paper-color);
+            border: 1px solid var(--border-color);
+            padding: 2px;
+            position: relative;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid var(--accent-color);
+            margin: 5px;
+            pointer-events: none;
+        }
+
+        .card__content {
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .strategy-box {
+            font-style: italic;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 1rem;
+            margin-top: 1.5rem;
+            color: var(--ink-color);
+            opacity: 0.9;
+        }
+
+        /* Radio Buttons - Simple Medieval Style */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .radio-item input { display: none; }
+        .radio-item label {
+            border: 1px solid var(--border-color);
+            padding: 5px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .radio-item input:checked + label {
+            background: var(--accent-color);
+            color: var(--paper-color);
+        }
+
+        .timer-display {
+            font-family: 'Crimson Pro', serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            text-align: center;
+            border-top: 1px double var(--accent-color);
+            border-bottom: 1px double var(--accent-color);
+            margin: 1rem 0;
+        }
+
+        .note-item {
+            border-bottom: 1px dashed var(--border-color);
+            padding: 8px 0;
+            font-style: italic;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 1px solid var(--border-color);
+            padding: 5px 15px;
+            background: var(--paper-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .input-group {
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .section-header {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }

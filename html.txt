@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Scholar's Ledger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="old.css">
+</head>
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🕯️ LIGHT CANDLE</button>
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-16">
+            <h1 class="text-7xl mb-2">The Scholar's Ledger</h1>
+            <p class="uppercase tracking-[0.3em] text-sm opacity-70">Journal of Disciplined Study</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- SECTION 1: ADD SUBJECT & POMODORO -->
+            <div class="lg:col-span-1 space-y-10">
+                <div class="input-group">
+                    <div class="section-header">New Entry</div>
+                    
+                    <div class="mb-4">
+                        <label class="text-xs uppercase opacity-60">Subject of Interest</label>
+                        <input type="text" id="subjectInput" placeholder="e.g. Natural Philosophy">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="text-xs uppercase opacity-60">Deadline of Examination</label>
+                        <input type="date" id="dateInput">
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="text-xs uppercase opacity-60 block text-center">Current Mastery</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" name="prep-level" id="poor" value="Poor" checked>
+                                <label for="poor">Lacking</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="prep-level" id="mod" value="Moderate">
+                                <label for="mod">Fair</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" name="prep-level" id="exc" value="Excellent">
+                                <label for="exc">Mastered</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="vintage-btn w-full" onclick="addSubject()">Scribe to Ledger</button>
+                </div>
+
+                <!-- POMODORO TIMER -->
+                <div class="input-group">
+                    <div class="section-header">The Hourglass</div>
+                    <div class="timer-display" id="timer">25:00</div>
+                    
+                    <div class="flex gap-4 justify-center">
+                        <button class="vintage-btn" id="startBtn" onclick="toggleTimer()">Commence</button>
+                        <button class="vintage-btn" style="background: transparent; border-color: var(--accent-color); color: var(--ink-color)" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- QUICK NOTES SECTION -->
+                <div class="input-group">
+                    <div class="section-header">Marginalia</div>
+                    <textarea id="noteInput" placeholder="Scribble a thought..."></textarea>
+                    <button class="vintage-btn w-full mt-4" onclick="addNote()">Preserve Note</button>
+                    <div id="notesList" class="mt-4"></div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: DISPLAY CARDS -->
+            <div class="lg:col-span-2">
+                <div class="flex justify-between items-end mb-8 border-b border-accent-color pb-2">
+                    <h2 class="text-3xl script-font">Active Studies</h2>
+                    <span id="cardCount" class="text-sm italic">0 Subjects Catalogued</span>
+                </div>
+                
+                <div id="plannerGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Cards appear here -->
+                </div>
+
+                <div id="emptyState" class="text-center py-20 italic opacity-40">
+                    <p>The ledger remains empty. Begin your scholarly journey.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="old.js"></script>
+</body>
+</html>

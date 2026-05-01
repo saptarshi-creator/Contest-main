@@ -1,0 +1,133 @@
+let subjects = [];
+        let notes = [];
+        let timerInterval = null;
+        let timeLeft = 25 * 60;
+        let isRunning = false;
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('themeBtn');
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeBtn.innerText = "🕯️ EXTINGUISH CANDLE";
+            } else {
+                themeBtn.innerText = "🕯️ LIGHT CANDLE";
+            }
+        }
+
+        function addSubject() {
+            const subjectInput = document.getElementById('subjectInput');
+            const dateInput = document.getElementById('dateInput');
+            const subjectName = subjectInput.value;
+            const examDate = dateInput.value;
+            const prepLevel = document.querySelector('input[name="prep-level"]:checked').value;
+
+            if (!subjectName || !examDate) return;
+
+            const newSubject = {
+                id: Date.now(),
+                name: subjectName,
+                date: examDate,
+                prep: prepLevel
+            };
+
+            subjects.push(newSubject);
+            renderSubjects();
+            subjectInput.value = '';
+            dateInput.value = '';
+        }
+
+        function deleteSubject(id) {
+            subjects = subjects.filter(s => s.id !== id);
+            renderSubjects();
+        }
+
+        function addNote() {
+            const noteInput = document.getElementById('noteInput');
+            if (!noteInput.value.trim()) return;
+            notes.push({ id: Date.now(), text: noteInput.value });
+            noteInput.value = '';
+            renderNotes();
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(n => n.id !== id);
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const list = document.getElementById('notesList');
+            list.innerHTML = notes.map(n => `
+                <div class="note-item">
+                    <span>- ${n.text}</span>
+                    <button onclick="deleteNote(${n.id})" class="opacity-50 hover:opacity-100">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function getStudyStrategy(prep) {
+            if (prep === 'Excellent') return `Thou hast mastered this craft. Engage in the Socratic method—teach a peer to further solidify thy knowledge.`;
+            if (prep === 'Moderate') return `A fair start. Review the core manuscripts and focus thy attention on the complex riddles within.`;
+            return `Diligent focus is required. Begin with the foundations and do not let thy heart be troubled by the mountain ahead.`;
+        }
+
+        function renderSubjects() {
+            const grid = document.getElementById('plannerGrid');
+            const empty = document.getElementById('emptyState');
+            const count = document.getElementById('cardCount');
+            
+            grid.innerHTML = '';
+            empty.style.display = subjects.length === 0 ? 'block' : 'none';
+            count.innerText = `${subjects.length} Subjects Catalogued`;
+
+            subjects.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card__content">
+                        <h3 class="script-font text-4xl mb-1">${s.name}</h3>
+                        <p class="text-xs uppercase tracking-widest opacity-60 mb-4">Date of Reckoning: ${s.date}</p>
+                        <div class="italic text-sm mb-2">Mastery: ${s.prep}</div>
+                        <div class="strategy-box">${getStudyStrategy(s.prep)}</div>
+                        <button onclick="deleteSubject(${s.id})" class="absolute top-4 right-4 opacity-30 hover:opacity-100">✕</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('startBtn');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btn.innerText = "Commence";
+                isRunning = false;
+            } else {
+                isRunning = true;
+                btn.innerText = "Halt";
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert("The sands have run out. Rest thy mind.");
+                        resetTimer();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 25 * 60;
+            isRunning = false;
+            document.getElementById('startBtn').innerText = "Commence";
+            updateTimerDisplay();
+        }
