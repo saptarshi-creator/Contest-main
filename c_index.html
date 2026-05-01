@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StudyFlow — Exam Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #1a1a26;
+  --surface: #1e1e2e;
+  --surface2: #252535;
+  --border: #2e2e45;
+  --border2: #3a3a55;
+  --text: #e8e8f0;
+  --text2: #9090b0;
+  --text3: #5a5a7a;
+  --accent: #7c6af7;
+  --accent2: #9d8fff;
+  --accent3: #c4b5fd;
+  --green: #4ade80;
+  --green2: #22c55e;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --pink: #f472b6;
+  --cyan: #22d3ee;
+  --glow: rgba(124,106,247,0.15);
+  --glow2: rgba(124,106,247,0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
+}
+[data-theme="light"] {
+  --bg: #f0f0f8;
+  --bg2: #e8e8f2;
+  --bg3: #ddddf0;
+  --surface: #ffffff;
+  --surface2: #f5f5fc;
+  --border: #d0d0e8;
+  --border2: #b8b8d8;
+  --text: #1a1a2e;
+  --text2: #4a4a6a;
+  --text3: #8080a0;
+  --glow: rgba(124,106,247,0.1);
+  --glow2: rgba(124,106,247,0.05);
+  --shadow: 0 4px 24px rgba(100,100,160,0.15);
+  --shadow-lg: 0 8px 48px rgba(100,100,160,0.2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  transition:background 0.3s,color 0.3s;
+  overflow-x:hidden;
+}
+
+/* ─── BG TEXTURE ─── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,106,247,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(34,211,238,0.05) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:9px}
+
+/* ─── LAYOUT ─── */
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px 20px 80px}
+
+/* ─── HEADER ─── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 0 32px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:36px;
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;box-shadow:0 0 20px var(--glow);
+}
+.logo-text{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.logo-text span{color:var(--accent2)}
+.header-right{display:flex;align-items:center;gap:12px}
+
+/* ─── BUTTONS ─── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:var(--radius-sm);
+  font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;
+  cursor:pointer;transition:all 0.18s;border:none;text-decoration:none;
+}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);color:var(--text);border-color:var(--border2)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 20px var(--glow)}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 0 30px var(--glow)}
+.btn-green{background:var(--green2);color:#fff}
+.btn-green:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-sm{padding:6px 12px;font-size:12.5px}
+.btn-icon{width:38px;height:38px;padding:0;justify-content:center;border-radius:10px}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:28px}
+.tab{
+  flex:1;padding:10px;text-align:center;
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;border-radius:9px;transition:all 0.2s;
+  color:var(--text2);border:none;background:transparent;letter-spacing:0.3px;
+}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 0 16px var(--glow)}
+
+/* ─── SECTIONS ─── */
+.section{display:none}
+.section.active{display:block}
+
+/* ─── QUOTE BANNER ─── */
+.quote-banner{
+  background:linear-gradient(135deg,rgba(124,106,247,0.12),rgba(34,211,238,0.08));
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  border-radius:var(--radius);
+  padding:16px 22px;
+  margin-bottom:28px;
+  display:flex;align-items:center;gap:14px;
+}
+.quote-icon{font-size:22px;flex-shrink:0}
+.quote-text{font-size:14px;color:var(--text2);font-style:italic;line-height:1.6}
+.quote-author{font-size:12px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace}
+
+/* ─── CARD ─── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:20px;
+  transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--border2)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.section-label{
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:14px;
+}
+
+/* ─── FORM ─── */
+.form-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+label{font-size:12.5px;font-weight:500;color:var(--text2)}
+input,select{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;padding:10px 13px;
+  transition:all 0.18s;width:100%;
+  outline:none;
+}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow2)}
+input::placeholder{color:var(--text3)}
+select option{background:var(--bg2)}
+
+/* ─── CONFIDENCE PICKER ─── */
+.conf-group{display:flex;flex-direction:column;gap:6px}
+.conf-pills{display:flex;gap:6px}
+.conf-pill{
+  flex:1;padding:8px 4px;text-align:center;border-radius:8px;
+  border:1.5px solid var(--border);cursor:pointer;
+  font-size:18px;transition:all 0.15s;background:transparent;
+}
+.conf-pill:hover{border-color:var(--border2);background:var(--bg3)}
+.conf-pill.selected-1{border-color:var(--red);background:rgba(248,113,113,0.12);box-shadow:0 0 12px rgba(248,113,113,0.2)}
+.conf-pill.selected-2{border-color:var(--amber);background:rgba(251,191,36,0.12);box-shadow:0 0 12px rgba(251,191,36,0.2)}
+.conf-pill.selected-3{border-color:var(--cyan);background:rgba(34,211,238,0.12);box-shadow:0 0 12px rgba(34,211,238,0.2)}
+.conf-pill.selected-4{border-color:var(--green);background:rgba(74,222,128,0.12);box-shadow:0 0 12px rgba(74,222,128,0.2)}
+.conf-label{font-size:10px;color:var(--text3);text-align:center;margin-top:2px;font-family:'DM Mono',monospace}
+
+/* ─── SUBJECT CHIPS ─── */
+.subject-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.subject-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 16px;
+  transition:all 0.2s;cursor:grab;position:relative;
+}
+.subject-item:hover{border-color:var(--border2)}
+.subject-item.dragging{opacity:0.5;border-color:var(--accent);border-style:dashed}
+.subject-item.drag-over{border-color:var(--accent);background:rgba(124,106,247,0.08)}
+.drag-handle{color:var(--text3);cursor:grab;font-size:16px;flex-shrink:0;user-select:none}
+.subject-color{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.subject-name{flex:1;font-weight:500;font-size:14px}
+.subject-meta{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.subject-conf{font-size:18px}
+.conf-bar{height:4px;border-radius:4px;flex:1;background:var(--bg3);overflow:hidden;min-width:60px}
+.conf-bar-fill{height:100%;border-radius:4px;transition:width 0.4s}
+.conf-low .conf-bar-fill{background:var(--red);width:25%}
+.conf-med .conf-bar-fill{background:var(--amber);width:50%}
+.conf-ok .conf-bar-fill{background:var(--cyan);width:75%}
+.conf-high .conf-bar-fill{background:var(--green);width:100%}
+
+/* ─── SCHEDULE ─── */
+.schedule-grid{display:flex;flex-direction:column;gap:14px}
+.day-block{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  transition:all 0.2s;
+}
+.day-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;background:var(--bg3);
+  border-bottom:1px solid var(--border);
+}
+.day-label{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+.day-date{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.day-slots{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.session-slot{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1.5px solid transparent;
+  cursor:grab;transition:all 0.15s;
+  user-select:none;
+}
+.session-slot:hover{border-color:var(--border2)}
+.session-slot.done{opacity:0.5}
+.session-slot.done .slot-name{text-decoration:line-through;color:var(--text3)}
+.slot-color{width:10px;height:36px;border-radius:5px;flex-shrink:0}
+.slot-info{flex:1;min-width:0}
+.slot-name{font-weight:500;font-size:14px;margin-bottom:2px}
+.slot-detail{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.slot-priority{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 8px;border-radius:99px;font-family:'Syne',sans-serif;
+}
+.prio-high{background:rgba(248,113,113,0.15);color:var(--red)}
+.prio-med{background:rgba(251,191,36,0.15);color:var(--amber)}
+.prio-low{background:rgba(74,222,128,0.15);color:var(--green)}
+.slot-done-btn{
+  width:26px;height:26px;border-radius:50%;
+  border:1.5px solid var(--border2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:12px;transition:all 0.15s;background:transparent;color:transparent;
+  flex-shrink:0;
+}
+.slot-done-btn:hover{border-color:var(--green);background:rgba(74,222,128,0.1)}
+.session-slot.done .slot-done-btn{background:var(--green2);border-color:var(--green2);color:#fff}
+
+/* ─── PROGRESS ─── */
+.progress-section{margin-bottom:28px}
+.progress-overall{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;
+}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.progress-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+.progress-pct{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--accent2)}
+.progress-track{height:12px;background:var(--bg3);border-radius:99px;overflow:hidden;position:relative}
+.progress-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--cyan));
+  transition:width 0.6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.progress-fill::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:30px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25));
+  animation:shimmer 1.5s infinite;
+}
+@keyframes shimmer{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+.subject-progress-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.subj-prog{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.subj-prog-name{font-size:13px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.subj-prog-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.subj-prog-track{height:7px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.subj-prog-fill{height:100%;border-radius:99px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1)}
+.subj-prog-stat{display:flex;justify-content:space-between;margin-top:5px}
+.subj-prog-stat span{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ─── POMODORO ─── */
+.pomodoro-card{
+  background:linear-gradient(135deg,var(--surface),var(--bg3));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.pomodoro-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,var(--glow),transparent);
+  pointer-events:none;
+}
+.pom-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.pom-mode{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.pom-mode-btn{
+  padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all 0.15s;border:1.5px solid var(--border);
+  background:transparent;color:var(--text2);font-family:'Syne',sans-serif;
+}
+.pom-mode-btn.active{border-color:var(--accent);color:var(--accent);background:var(--glow)}
+.pom-ring-wrapper{position:relative;width:180px;height:180px;margin:0 auto 20px;cursor:pointer}
+.pom-ring-wrapper:hover .pom-svg circle:last-child{stroke-opacity:0.9}
+.pom-svg{transform:rotate(-90deg)}
+.pom-ring-bg{fill:none;stroke:var(--bg3);stroke-width:8}
+.pom-ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 0.5s linear,stroke 0.3s}
+.pom-time-display{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.pom-time{font-family:'DM Mono',monospace;font-size:36px;font-weight:500;letter-spacing:2px}
+.pom-cycle{font-size:11px;color:var(--text3);margin-top:4px;font-family:'DM Mono',monospace}
+.pom-controls{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px}
+.pom-btn{
+  width:44px;height:44px;border-radius:50%;
+  border:1.5px solid var(--border2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;background:var(--surface2);color:var(--text);transition:all 0.15s;
+}
+.pom-btn:hover{border-color:var(--accent);background:var(--glow)}
+.pom-btn-main{width:56px;height:56px;font-size:22px;border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 0 20px var(--glow)}
+.pom-btn-main:hover{background:var(--accent2);transform:scale(1.05)}
+.pom-subject-select{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 12px;
+  width:100%;max-width:280px;outline:none;
+}
+.pom-sessions-info{
+  display:flex;gap:6px;justify-content:center;margin-top:14px;flex-wrap:wrap;
+}
+.pom-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);transition:background 0.3s}
+.pom-dot.filled{background:var(--accent)}
+
+/* ─── COPY PLAN ─── */
+.copy-area{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;font-family:'DM Mono',monospace;font-size:12px;
+  line-height:1.7;color:var(--text2);white-space:pre-wrap;max-height:300px;overflow-y:auto;
+  display:none;margin-top:12px;
+}
+.copy-area.visible{display:block}
+
+/* ─── EMPTY STATE ─── */
+.empty-state{
+  text-align:center;padding:60px 20px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.empty-icon{font-size:52px;opacity:0.4}
+.empty-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text2)}
+.empty-sub{font-size:14px;color:var(--text3);max-width:320px;line-height:1.6}
+
+/* ─── ENCOURAGEMENT ─── */
+.enc-bar{
+  background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(34,211,238,0.08));
+  border:1px solid rgba(74,222,128,0.2);
+  border-radius:var(--radius);padding:14px 18px;
+  font-size:13.5px;color:var(--green);
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:20px;font-style:italic;
+}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:99px;padding:10px 22px;
+  font-size:13.5px;font-weight:500;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:var(--shadow-lg);z-index:999;
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ─── ANIMATION ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp 0.4s ease both}
+.fade-up-1{animation-delay:0.05s}.fade-up-2{animation-delay:0.1s}.fade-up-3{animation-delay:0.15s}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:640px){
+  .form-row{grid-template-columns:1fr;gap:10px}
+  .subject-progress-list{grid-template-columns:1fr}
+  .tabs .tab{font-size:11px;padding:9px 6px}
+  .pom-ring-wrapper{width:150px;height:150px}
+  .pom-time{font-size:28px}
+}
+
+/* ─── DRAG STYLES ─── */
+.schedule-day-droppable{min-height:20px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <div>
+        <div class="logo-text">Study<span>Flow</span></div>
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">exam planner · 2026</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-ghost btn-sm" id="themeToggle">🌙 Dark</button>
+      <button class="btn btn-ghost btn-sm" id="copyPlanBtn">📋 Copy Plan</button>
+      <button class="btn btn-primary btn-sm" id="generateBtn">⚡ Generate Schedule</button>
+    </div>
+  </header>
+
+  <!-- QUOTE BANNER -->
+  <div class="quote-banner fade-up" id="quoteBanner">
+    <div class="quote-icon">✨</div>
+    <div>
+      <div class="quote-text" id="quoteText">Loading inspiration...</div>
+      <div class="quote-author" id="quoteAuthor"></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs fade-up fade-up-1">
+    <button class="tab active" data-tab="setup">📝 Setup</button>
+    <button class="tab" data-tab="schedule">📅 Schedule</button>
+    <button class="tab" data-tab="progress">📊 Progress</button>
+    <button class="tab" data-tab="timer">⏱ Pomodoro</button>
+  </div>
+
+  <!-- ═══ SETUP TAB ═══ -->
+  <div class="section active" id="tab-setup">
+
+    <!-- Add Subject -->
+    <div class="card fade-up fade-up-2">
+      <div class="card-header">
+        <div class="card-title">🎯 Add Subjects</div>
+        <div style="font-size:12px;color:var(--text3)" id="subjectCount">0 / 4 subjects</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Subject Name</label>
+          <input type="text" id="subjectInput" placeholder="e.g. Mathematics" maxlength="30"/>
+        </div>
+        <div class="form-group">
+          <label>Exam Date</label>
+          <input type="date" id="dateInput"/>
+        </div>
+        <div>
+          <label style="opacity:0">&nbsp;</label>
+          <button class="btn btn-primary" id="addSubjectBtn" style="width:100%">+ Add</button>
+        </div>
+      </div>
+      <!-- Confidence -->
+      <div class="conf-group" style="margin-top:10px">
+        <label>How confident are you? <span id="confLabel" style="color:var(--text3);font-family:'DM Mono',monospace;font-size:12px"></span></label>
+        <div class="conf-pills">
+          <button class="conf-pill" data-conf="1">😬<div class="conf-label">Struggling</div></button>
+          <button class="conf-pill" data-conf="2">😐<div class="conf-label">Shaky</div></button>
+          <button class="conf-pill" data-conf="3">🙂<div class="conf-label">Getting There</div></button>
+          <button class="conf-pill" data-conf="4">😎<div class="conf-label">Confident</div></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject List -->
+    <div class="card fade-up fade-up-3">
+      <div class="card-header">
+        <div class="card-title">📚 Your Subjects</div>
+        <button class="btn btn-ghost btn-sm" id="clearAllBtn">🗑 Clear All</button>
+      </div>
+      <div class="subject-list" id="subjectList">
+        <div class="empty-state" style="padding:30px 20px">
+          <div class="empty-icon">📖</div>
+          <div class="empty-title">No subjects yet</div>
+          <div class="empty-sub">Add your exam subjects above to get started. Try adding at least 3!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exam Day Config -->
+    <div class="card fade-up">
+      <div class="card-header">
+        <div class="card-title">📆 Available Study Days</div>
+      </div>
+      <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="form-group">
+          <label>Study Start Date</label>
+          <input type="date" id="startDateInput"/>
+        </div>
+        <div class="form-group">
+          <label>Hours/Day (Weekdays)</label>
+          <input type="number" id="hoursWeekday" value="4" min="1" max="12" style="max-width:120px"/>
+        </div>
+        <div class="form-group">
+          <label>Hours/Day (Weekend)</label>
+          <input type="number" id="hoursWeekend" value="7" min="1" max="14" style="max-width:120px"/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ SCHEDULE TAB ═══ -->
+  <div class="section" id="tab-schedule">
+    <div id="scheduleEmpty" class="empty-state fade-up">
+      <div class="empty-icon">🗓</div>
+      <div class="empty-title">No schedule yet</div>
+      <div class="empty-sub">Go to Setup, add your subjects, and hit "Generate Schedule" to see your personalised plan here.</div>
+      <button class="btn btn-primary" onclick="switchTab('setup')">← Go to Setup</button>
+    </div>
+    <div id="scheduleContent" style="display:none">
+      <div class="enc-bar" id="encBar">🚀 You've got this! Your personalised plan is ready.</div>
+      <div class="schedule-grid" id="scheduleGrid"></div>
+      <div class="copy-area" id="copyArea"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PROGRESS TAB ═══ -->
+  <div class="section" id="tab-progress">
+    <div id="progressEmpty" class="empty-state">
+      <div class="empty-icon">📊</div>
+      <div class="empty-title">No data yet</div>
+      <div class="empty-sub">Generate a schedule first, then mark sessions as done to track progress.</div>
+      <button class="btn btn-primary" onclick="switchTab('setup')">← Go to Setup</button>
+    </div>
+    <div id="progressContent" style="display:none">
+      <div class="progress-section">
+        <div class="progress-overall">
+          <div class="progress-header">
+            <div class="progress-title">Overall Progress</div>
+            <div class="progress-pct" id="overallPct">0%</div>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="overallFill" style="width:0%"></div></div>
+          <div style="margin-top:8px;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace" id="progressStat">0 sessions completed</div>
+        </div>
+        <div class="subject-progress-list" id="subjectProgressList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TIMER TAB ═══ -->
+  <div class="section" id="tab-timer">
+    <div class="card pomodoro-card fade-up">
+      <div class="pom-label">Focus Timer</div>
+      <div class="pom-mode">
+        <button class="pom-mode-btn active" data-mode="25" data-label="Focus">🎯 Focus · 25m</button>
+        <button class="pom-mode-btn" data-mode="5" data-label="Short">☕ Short · 5m</button>
+        <button class="pom-mode-btn" data-mode="15" data-label="Long">🌿 Long · 15m</button>
+      </div>
+      <div class="pom-ring-wrapper" id="pomRingWrap">
+        <svg class="pom-svg" width="180" height="180" viewBox="0 0 180 180" id="pomSvg">
+          <circle class="pom-ring-bg" cx="90" cy="90" r="76"/>
+          <circle class="pom-ring-fill" cx="90" cy="90" r="76" id="pomRingFill"/>
+        </svg>
+        <div class="pom-time-display">
+          <div class="pom-time" id="pomTime">25:00</div>
+          <div class="pom-cycle" id="pomCycleText">Session 1 of 4</div>
+        </div>
+      </div>
+      <div class="pom-controls">
+        <button class="pom-btn" id="pomReset" title="Reset">↺</button>
+        <button class="pom-btn pom-btn-main" id="pomPlay">▶</button>
+        <button class="pom-btn" id="pomSkip" title="Skip">⏭</button>
+      </div>
+      <div style="margin-bottom:10px">
+        <select class="pom-subject-select" id="pomSubjectSelect">
+          <option value="">— Select subject to focus on —</option>
+        </select>
+      </div>
+      <div class="pom-sessions-info" id="pomDots"></div>
+      <div style="font-size:12px;color:var(--text3);margin-top:12px;font-family:'DM Mono',monospace" id="pomStatusText">Ready to focus 🎯</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Done!</div>
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+const COLORS = ['#7c6af7','#22d3ee','#f472b6','#4ade80','#fbbf24','#f87171','#a78bfa','#34d399'];
+const CONF_LABELS = {1:'Struggling 😬',2:'Shaky 😐',3:'Getting There 🙂',4:'Confident 😎'};
+const CONF_HOURS = {1:3,2:2,3:1.5,4:1}; // multiplier for allocation
+
+let state = {
+  subjects: [],
+  schedule: [],
+  doneSet: new Set(),
+  selectedConf: null,
+  theme: 'dark',
+  pomMode: 25,
+  pomPlaying: false,
+  pomSeconds: 25*60,
+  pomTotalSeconds: 25*60,
+  pomSession: 1,
+  pomTotalSessions: 4,
+  pomInterval: null,
+  pomPhase: 'focus', // focus|short|long
+  pomCycle: 0,
+};
+
+const QUOTES = [
+  {text:"The secret of getting ahead is getting started.",author:"Mark Twain"},
+  {text:"Don't wish it were easier. Wish you were better.",author:"Jim Rohn"},
+  {text:"Success is the sum of small efforts, repeated day in and day out.",author:"Robert Collier"},
+  {text:"Believe you can and you're halfway there.",author:"Theodore Roosevelt"},
+  {text:"Hard work beats talent when talent doesn't work hard.",author:"Tim Notke"},
+  {text:"The pain of studying is far less than the pain of regret.",author:"Unknown"},
+  {text:"Your future self is watching you right now through memories.",author:"Aubrey De Grey"},
+  {text:"Study hard, for the well is deep, and our brains are shallow.",author:"Richard Baxter"},
+  {text:"An investment in knowledge pays the best interest.",author:"Benjamin Franklin"},
+  {text:"Motivation gets you going, but discipline keeps you growing.",author:"John C. Maxwell"},
+];
+
+const ENC_MESSAGES = [
+  "🌟 You've got this! Every hour of study now means confidence on exam day.",
+  "🚀 Smart planning = less stress. You're already ahead of the curve!",
+  "💪 The hardest part is starting. You've done that — now keep going!",
+  "🎯 Weaker subjects are tackled first. That's the StudyFlow advantage!",
+  "✨ One session at a time. That's all it takes — consistency over intensity!",
+];
+
+// ══════════════════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════════════════
+function save(){
+  try{
+    localStorage.setItem('sf_subjects',JSON.stringify(state.subjects));
+    localStorage.setItem('sf_schedule',JSON.stringify(state.schedule));
+    localStorage.setItem('sf_done',JSON.stringify([...state.doneSet]));
+    localStorage.setItem('sf_theme',state.theme);
+    const si = document.getElementById('startDateInput');
+    const hw = document.getElementById('hoursWeekday');
+    const hwe = document.getElementById('hoursWeekend');
+    if(si) localStorage.setItem('sf_startDate',si.value);
+    if(hw) localStorage.setItem('sf_hw',hw.value);
+    if(hwe) localStorage.setItem('sf_hwe',hwe.value);
+  }catch(e){}
+}
+
+function load(){
+  try{
+    const subs = localStorage.getItem('sf_subjects');
+    const sched = localStorage.getItem('sf_schedule');
+    const done = localStorage.getItem('sf_done');
+    const theme = localStorage.getItem('sf_theme');
+    if(subs) state.subjects = JSON.parse(subs);
+    if(sched) state.schedule = JSON.parse(sched);
+    if(done) state.doneSet = new Set(JSON.parse(done));
+    if(theme) state.theme = theme;
+    const si = document.getElementById('startDateInput');
+    const hw = document.getElementById('hoursWeekday');
+    const hwe = document.getElementById('hoursWeekend');
+    if(si) si.value = localStorage.getItem('sf_startDate')||todayStr();
+    if(hw) hw.value = localStorage.getItem('sf_hw')||'4';
+    if(hwe) hwe.value = localStorage.getItem('sf_hwe')||'7';
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+function fmtDate(str){
+  const d = new Date(str+'T00:00:00');
+  return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+function dayOfWeek(str){
+  return new Date(str+'T00:00:00').getDay(); // 0=Sun
+}
+function addDays(str,n){
+  const d = new Date(str+'T00:00:00');
+  d.setDate(d.getDate()+n);
+  return d.toISOString().slice(0,10);
+}
+function datesBetween(start,end){
+  const dates=[];let cur=start;
+  while(cur<=end){dates.push(cur);cur=addDays(cur,1);}
+  return dates;
+}
+function showToast(msg,emoji='✅'){
+  const t=document.getElementById('toast');
+  t.innerHTML=emoji+' '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function randomItem(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+// ══════════════════════════════════════════════
+// QUOTE
+// ══════════════════════════════════════════════
+function setQuote(){
+  const q=randomItem(QUOTES);
+  document.getElementById('quoteText').textContent='"'+q.text+'"';
+  document.getElementById('quoteAuthor').textContent='— '+q.author;
+}
+
+// ══════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',state.theme);
+  const btn=document.getElementById('themeToggle');
+  btn.textContent=state.theme==='dark'?'☀️ Light':'🌙 Dark';
+}
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  state.theme=state.theme==='dark'?'light':'dark';
+  applyTheme();save();
+});
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.tab===id);
+  });
+  document.querySelectorAll('.section').forEach(s=>{
+    s.classList.toggle('active',s.id==='tab-'+id);
+  });
+  if(id==='schedule') renderSchedule();
+  if(id==='progress') renderProgress();
+}
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>switchTab(t.dataset.tab));
+});
+
+// ══════════════════════════════════════════════
+// CONFIDENCE PICKER
+// ══════════════════════════════════════════════
+document.querySelectorAll('.conf-pill').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    state.selectedConf=+btn.dataset.conf;
+    document.querySelectorAll('.conf-pill').forEach(b=>b.className='conf-pill');
+    btn.classList.add('selected-'+state.selectedConf);
+    document.getElementById('confLabel').textContent='→ '+CONF_LABELS[state.selectedConf];
+  });
+});
+
+// ══════════════════════════════════════════════
+// SUBJECT MANAGEMENT
+// ══════════════════════════════════════════════
+function renderSubjects(){
+  const list=document.getElementById('subjectList');
+  document.getElementById('subjectCount').textContent=state.subjects.length+' / 4 subjects';
+  if(!state.subjects.length){
+    list.innerHTML=`<div class="empty-state" style="padding:30px 20px">
+      <div class="empty-icon">📖</div>
+      <div class="empty-title">No subjects yet</div>
+      <div class="empty-sub">Add your exam subjects above to get started. Try adding at least 3!</div>
+    </div>`;
+    return;
+  }
+  list.innerHTML='';
+  state.subjects.forEach((s,i)=>{
+    const confClass=['','conf-low','conf-med','conf-ok','conf-high'][s.confidence];
+    const confEmoji=['','😬','😐','🙂','😎'][s.confidence];
+    const daysLeft=Math.ceil((new Date(s.examDate+'T00:00:00')-new Date())/86400000);
+    const item=document.createElement('div');
+    item.className='subject-item';
+    item.draggable=true;
+    item.dataset.index=i;
+    item.innerHTML=`
+      <span class="drag-handle" title="Drag to reorder">⋮⋮</span>
+      <span class="subject-color" style="background:${s.color}"></span>
+      <div style="flex:1;min-width:0">
+        <div class="subject-name">${s.name}</div>
+        <div class="subject-meta">${fmtDate(s.examDate)} · ${daysLeft>0?daysLeft+' days left':'Today!'}</div>
+      </div>
+      <div class="${confClass}" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="subject-conf">${confEmoji}</span>
+        <div class="conf-bar"><div class="conf-bar-fill"></div></div>
+      </div>
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="removeSubject(${i})" title="Remove">✕</button>
+    `;
+    list.appendChild(item);
+    // drag events
+    item.addEventListener('dragstart',dragStart);
+    item.addEventListener('dragover',dragOver);
+    item.addEventListener('drop',dropSubject);
+    item.addEventListener('dragend',dragEnd);
+  });
+  updatePomSubjects();
+}
+
+let dragSrcIdx=null;
+function dragStart(e){dragSrcIdx=+this.dataset.index;this.classList.add('dragging');}
+function dragOver(e){e.preventDefault();this.classList.add('drag-over');}
+function dropSubject(e){
+  e.preventDefault();
+  const tgt=+this.dataset.index;
+  if(dragSrcIdx!==null&&dragSrcIdx!==tgt){
+    const arr=state.subjects;
+    const tmp=arr.splice(dragSrcIdx,1)[0];
+    arr.splice(tgt,0,tmp);
+    save();renderSubjects();
+  }
+  document.querySelectorAll('.subject-item').forEach(i=>i.classList.remove('drag-over'));
+}
+function dragEnd(){
+  document.querySelectorAll('.subject-item').forEach(i=>i.classList.remove('dragging','drag-over'));
+}
+
+document.getElementById('addSubjectBtn').addEventListener('click',()=>{
+  const name=document.getElementById('subjectInput').value.trim();
+  const date=document.getElementById('dateInput').value;
+  if(!name){showToast('Enter a subject name','⚠️');return;}
+  if(!date){showToast('Pick an exam date','📅');return;}
+  if(!state.selectedConf){showToast('Rate your confidence','😬');return;}
+  if(state.subjects.length>=6){showToast('Max 6 subjects!','🛑');return;}
+  state.subjects.push({
+    name,examDate:date,confidence:state.selectedConf,
+    color:COLORS[state.subjects.length%COLORS.length],
+    id:Date.now()
+  });
+  document.getElementById('subjectInput').value='';
+  document.getElementById('dateInput').value='';
+  state.selectedConf=null;
+  document.querySelectorAll('.conf-pill').forEach(b=>b.className='conf-pill');
+  document.getElementById('confLabel').textContent='';
+  save();renderSubjects();
+  showToast(name+' added!','✅');
+});
+
+document.getElementById('subjectInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter') document.getElementById('addSubjectBtn').click();
+});
+
+function removeSubject(i){
+  const name=state.subjects[i].name;
+  state.subjects.splice(i,1);
+  save();renderSubjects();
+  showToast(name+' removed','🗑');
+}
+
+document.getElementById('clearAllBtn').addEventListener('click',()=>{
+  if(!state.subjects.length) return;
+  state.subjects=[];state.schedule=[];state.doneSet=new Set();
+  save();renderSubjects();showToast('All cleared','🗑');
+});
+
+// ══════════════════════════════════════════════
+// SCHEDULE GENERATION (SMART ALLOCATION)
+// ══════════════════════════════════════════════
+document.getElementById('generateBtn').addEventListener('click',generateSchedule);
+
+function generateSchedule(){
+  if(state.subjects.length<1){showToast('Add at least one subject first!','⚠️');return;}
+  const startDate=document.getElementById('startDateInput').value||todayStr();
+  const hwDay=+document.getElementById('hoursWeekday').value||4;
+  const hwEnd=+document.getElementById('hoursWeekend').value||7;
+
+  // Find the latest exam date
+  const examDates=state.subjects.map(s=>s.examDate).sort();
+  const lastExam=examDates[examDates.length-1];
+  const allDays=datesBetween(startDate,lastExam);
+
+  // Smart allocation: subjects with lower confidence get more time
+  // Also factor in deadline urgency
+  const today=new Date();
+  const scored=state.subjects.map(s=>{
+    const daysToExam=Math.max(1,Math.ceil((new Date(s.examDate+'T00:00:00')-today)/86400000));
+    const confWeight=CONF_HOURS[s.confidence]; // lower conf = more hours needed
+    const urgency=1/daysToExam; // closer = more urgent
+    const totalHours=confWeight*daysToExam*0.5; // raw time budget
+    return {...s,daysToExam,confWeight,urgency,totalHours};
+  });
+  const totalScore=scored.reduce((a,s)=>a+s.confWeight,0);
+
+  // Build day-by-day schedule
+  const schedule=[];
+  // Track remaining time budget per subject
+  const budget={};
+  scored.forEach(s=>{budget[s.id]=s.totalHours;});
+
+  for(const day of allDays){
+    const dow=dayOfWeek(day);
+    const isWeekend=dow===0||dow===6;
+    const hoursAvail=isWeekend?hwEnd:hwDay;
+
+    // Filter subjects whose exam hasn't passed yet
+    const eligible=scored.filter(s=>s.examDate>=day);
+    if(!eligible.length) continue;
+
+    // Calculate priority score for today
+    const dayScores=eligible.map(s=>{
+      const daysLeft=Math.max(1,Math.ceil((new Date(s.examDate+'T00:00:00')-new Date(day+'T00:00:00'))/86400000));
+      const urgency=10/daysLeft;
+      const confPriority=5-s.confidence; // lower conf = higher priority
+      const score=urgency*2+confPriority*3;
+      return {...s,score,daysLeft};
+    }).sort((a,b)=>b.score-a.score);
+
+    // Allocate time slots
+    const slots=[];
+    let remaining=hoursAvail;
+    const maxSubjsPerDay=Math.min(eligible.length,remaining>=4?2:1);
+
+    for(let si=0;si<maxSubjsPerDay&&remaining>0;si++){
+      const subj=dayScores[si];
+      // Smart time allocation: more time for harder/closer subjects
+      const fraction=subj.score/dayScores.slice(0,maxSubjsPerDay).reduce((a,x)=>a+x.score,0);
+      let hours=Math.min(remaining,Math.max(1,Math.round(hoursAvail*fraction)));
+      if(si===maxSubjsPerDay-1) hours=remaining; // give rest to last subj
+      hours=Math.min(hours,remaining);
+      if(hours<=0) break;
+      const priority=subj.confidence===1?'high':subj.confidence===2?'med':'low';
+      slots.push({
+        subjectId:subj.id,name:subj.name,color:subj.color,
+        hours,priority,
+        examDate:subj.examDate,daysLeft:subj.daysLeft,
+        id:day+'-'+subj.id
+      });
+      remaining-=hours;
+    }
+    if(slots.length) schedule.push({date:day,slots});
+  }
+
+  state.schedule=schedule;
+  state.doneSet=new Set();
+  save();
+  showToast('Schedule generated! 🎉','⚡');
+  switchTab('schedule');
+}
+
+// ══════════════════════════════════════════════
+// RENDER SCHEDULE
+// ══════════════════════════════════════════════
+function renderSchedule(){
+  const empty=document.getElementById('scheduleEmpty');
+  const content=document.getElementById('scheduleContent');
+  if(!state.schedule.length){
+    empty.style.display='flex';content.style.display='none';return;
+  }
+  empty.style.display='none';content.style.display='block';
+  document.getElementById('encBar').textContent=randomItem(ENC_MESSAGES);
+  const grid=document.getElementById('scheduleGrid');
+  grid.innerHTML='';
+
+  state.schedule.forEach((day,di)=>{
+    const block=document.createElement('div');
+    block.className='day-block fade-up';
+    block.style.animationDelay=di*0.05+'s';
+    const allDone=day.slots.every(s=>state.doneSet.has(s.id));
+    block.innerHTML=`
+      <div class="day-header">
+        <div class="day-label">${getDayName(day.date)} ${allDone?'<span style="color:var(--green);font-size:13px">✓ Done</span>':''}</div>
+        <div class="day-date">${fmtDate(day.date)}</div>
+      </div>
+      <div class="day-slots schedule-day-droppable" id="dayslots-${di}">
+        ${day.slots.map((slot,si)=>slotHTML(slot,di,si)).join('')}
+      </div>
+    `;
+    grid.appendChild(block);
+  });
+  attachSlotEvents();
+}
+
+function slotHTML(slot,di,si){
+  const done=state.doneSet.has(slot.id);
+  const prioClass={high:'prio-high',med:'prio-med',low:'prio-low'}[slot.priority]||'prio-low';
+  const prioLabel={high:'High Priority',med:'Mid Priority',low:'Comfortable'}[slot.priority]||'';
+  const h=Math.floor(slot.hours);
+  const m=(slot.hours%1)*60;
+  const durStr=h>0?h+'h'+(m>0?' '+m+'m':''):m+'m';
+  return `<div class="session-slot${done?' done':''}" data-di="${di}" data-si="${si}" data-slotid="${slot.id}" draggable="true">
+    <div class="slot-color" style="background:${slot.color}"></div>
+    <div class="slot-info">
+      <div class="slot-name">${slot.name}</div>
+      <div class="slot-detail">⏱ ${durStr} · 📅 Exam in ${slot.daysLeft}d</div>
+    </div>
+    <span class="slot-priority ${prioClass}">${prioLabel}</span>
+    <button class="slot-done-btn" onclick="toggleDone('${slot.id}','${di}','${si}')" title="Mark done">✓</button>
+  </div>`;
+}
+
+function getDayName(dateStr){
+  const dow=dayOfWeek(dateStr);
+  return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dow];
+}
+
+function toggleDone(id,di,si){
+  if(state.doneSet.has(id)) state.doneSet.delete(id);
+  else {state.doneSet.add(id);showToast('Session complete! 💪','✅');}
+  save();renderSchedule();renderProgress();
+}
+
+// Drag & rearrange schedule slots
+let dragSlotInfo=null;
+function attachSlotEvents(){
+  document.querySelectorAll('.session-slot').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      dragSlotInfo={di:+el.dataset.di,si:+el.dataset.si};
+      el.style.opacity='0.4';
+    });
+    el.addEventListener('dragend',e=>{el.style.opacity='';dragSlotInfo=null;});
+    el.addEventListener('dragover',e=>e.preventDefault());
+    el.addEventListener('drop',e=>{
+      e.preventDefault();
+      if(!dragSlotInfo) return;
+      const tdi=+el.dataset.di,tsi=+el.dataset.si;
+      const src=state.schedule[dragSlotInfo.di].slots;
+      const tgt=state.schedule[tdi].slots;
+      const [moved]=src.splice(dragSlotInfo.si,1);
+      tgt.splice(tsi,0,moved);
+      save();renderSchedule();
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════════
+function renderProgress(){
+  const empty=document.getElementById('progressEmpty');
+  const content=document.getElementById('progressContent');
+  if(!state.schedule.length){
+    empty.style.display='flex';content.style.display='none';return;
+  }
+  empty.style.display='none';content.style.display='block';
+
+  const allSlots=state.schedule.flatMap(d=>d.slots);
+  const total=allSlots.length;
+  const done=allSlots.filter(s=>state.doneSet.has(s.id)).length;
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('overallPct').textContent=pct+'%';
+  document.getElementById('overallFill').style.width=pct+'%';
+  document.getElementById('progressStat').textContent=done+' of '+total+' sessions completed';
+
+  // Per subject
+  const subjectList=document.getElementById('subjectProgressList');
+  subjectList.innerHTML='';
+  state.subjects.forEach(sub=>{
+    const subSlots=allSlots.filter(s=>s.subjectId===sub.id);
+    const subDone=subSlots.filter(s=>state.doneSet.has(s.id)).length;
+    const subPct=subSlots.length>0?Math.round(subDone/subSlots.length*100):0;
+    const div=document.createElement('div');
+    div.className='subj-prog fade-up';
+    div.innerHTML=`
+      <div class="subj-prog-name">
+        <span class="subj-prog-dot" style="background:${sub.color}"></span>
+        ${sub.name}
+      </div>
+      <div class="subj-prog-track">
+        <div class="subj-prog-fill" style="width:${subPct}%;background:${sub.color}"></div>
+      </div>
+      <div class="subj-prog-stat">
+        <span>${subDone}/${subSlots.length} sessions</span>
+        <span>${subPct}%</span>
+      </div>
+    `;
+    subjectList.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════
+// COPY PLAN
+// ══════════════════════════════════════════════
+document.getElementById('copyPlanBtn').addEventListener('click',()=>{
+  if(!state.schedule.length){showToast('Generate a schedule first!','⚠️');return;}
+  let text='📚 StudyFlow — My Exam Schedule\n';
+  text+='═'.repeat(40)+'\n\n';
+  state.schedule.forEach(day=>{
+    text+=`📅 ${getDayName(day.date)}, ${fmtDate(day.date)}\n`;
+    day.slots.forEach(s=>{
+      const done=state.doneSet.has(s.id)?'[✓] ':'[ ] ';
+      text+=`  ${done}${s.name} · ${s.hours}h · Priority: ${s.priority.toUpperCase()}\n`;
+    });
+    text+='\n';
+  });
+  text+='\nGenerated by StudyFlow 🚀';
+  navigator.clipboard.writeText(text).then(()=>showToast('Plan copied to clipboard!','📋'));
+  const area=document.getElementById('copyArea');
+  area.textContent=text;
+  area.classList.toggle('visible');
+  switchTab('schedule');
+});
+
+// ══════════════════════════════════════════════
+// POMODORO TIMER
+// ══════════════════════════════════════════════
+const CIRC=2*Math.PI*76; // circumference of r=76
+let pomAnimFrame=null;
+
+function pomInit(){
+  const fill=document.getElementById('pomRingFill');
+  fill.setAttribute('stroke-dasharray',CIRC);
+  fill.setAttribute('stroke-dashoffset','0');
+  pomUpdateRing();
+  pomUpdateDisplay();
+  pomRenderDots();
+}
+
+function pomUpdateDisplay(){
+  const m=Math.floor(state.pomSeconds/60).toString().padStart(2,'0');
+  const s=(state.pomSeconds%60).toString().padStart(2,'0');
+  document.getElementById('pomTime').textContent=m+':'+s;
+  const phaseLabel=state.pomPhase==='focus'?'Focus':'Break';
+  document.getElementById('pomCycleText').textContent=`${phaseLabel} · Cycle ${state.pomCycle+1}`;
+}
+
+function pomUpdateRing(){
+  const fill=document.getElementById('pomRingFill');
+  const ratio=state.pomSeconds/state.pomTotalSeconds;
+  const offset=CIRC*(1-ratio);
+  fill.setAttribute('stroke-dashoffset',offset);
+  // Color based on mode
+  const colors={focus:'#7c6af7',short:'#22d3ee',long:'#4ade80'};
+  fill.style.stroke=colors[state.pomPhase]||'#7c6af7';
+}
+
+function pomTick(){
+  if(!state.pomPlaying) return;
+  state.pomSeconds--;
+  if(state.pomSeconds<0){
+    pomComplete();return;
+  }
+  pomUpdateDisplay();pomUpdateRing();
+}
+
+function pomComplete(){
+  clearInterval(state.pomInterval);state.pomPlaying=false;
+  pomPlaySound();
+  if(state.pomPhase==='focus'){
+    state.pomCycle++;
+    if(state.pomCycle%4===0){
+      // Long break
+      state.pomPhase='long';state.pomMode=15;state.pomTotalSeconds=15*60;
+      showToast('Great job! Take a long break 🌿','🎉');
+    } else {
+      state.pomPhase='short';state.pomMode=5;state.pomTotalSeconds=5*60;
+      showToast('Session done! Short break ☕','⏰');
+    }
+  } else {
+    state.pomPhase='focus';state.pomMode=25;state.pomTotalSeconds=25*60;
+    showToast('Break over! Back to focus 🎯','🚀');
+  }
+  state.pomSeconds=state.pomTotalSeconds;
+  document.getElementById('pomPlay').textContent='▶';
+  document.getElementById('pomStatusText').textContent='Session complete! 🎉 Press play to continue.';
+  pomUpdateDisplay();pomUpdateRing();pomRenderDots();
+  // Auto-start next
+  setTimeout(()=>{pomToggle();},1500);
+}
+
+function pomToggle(){
+  state.pomPlaying=!state.pomPlaying;
+  document.getElementById('pomPlay').textContent=state.pomPlaying?'⏸':'▶';
+  document.getElementById('pomStatusText').textContent=state.pomPlaying?
+    (state.pomPhase==='focus'?'Focus time! You can do it 🎯':'Break time! Breathe 🌿'):
+    'Paused. Press play when ready.';
+  if(state.pomPlaying){
+    state.pomInterval=setInterval(pomTick,1000);
+  } else {
+    clearInterval(state.pomInterval);
+  }
+}
+
+document.getElementById('pomPlay').addEventListener('click',pomToggle);
+document.getElementById('pomReset').addEventListener('click',()=>{
+  clearInterval(state.pomInterval);state.pomPlaying=false;
+  state.pomSeconds=state.pomTotalSeconds;
+  document.getElementById('pomPlay').textContent='▶';
+  document.getElementById('pomStatusText').textContent='Ready to focus 🎯';
+  pomUpdateDisplay();pomUpdateRing();
+});
+document.getElementById('pomSkip').addEventListener('click',()=>{
+  clearInterval(state.pomInterval);state.pomPlaying=false;
+  state.pomSeconds=0;pomComplete();
+});
+
+document.querySelectorAll('.pom-mode-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    clearInterval(state.pomInterval);state.pomPlaying=false;
+    document.querySelectorAll('.pom-mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const mins=+btn.dataset.mode;
+    const label=btn.dataset.label;
+    state.pomMode=mins;state.pomPhase=label.toLowerCase()==='focus'?'focus':label.toLowerCase()==='short'?'short':'long';
+    state.pomTotalSeconds=mins*60;state.pomSeconds=mins*60;
+    document.getElementById('pomPlay').textContent='▶';
+    document.getElementById('pomStatusText').textContent='Ready to focus 🎯';
+    pomUpdateDisplay();pomUpdateRing();
+  });
+});
+
+function pomRenderDots(){
+  const dots=document.getElementById('pomDots');
+  dots.innerHTML='';
+  for(let i=0;i<4;i++){
+    const d=document.createElement('div');
+    d.className='pom-dot'+(i<state.pomCycle%4||(state.pomCycle>0&&i===0)?' filled':'');
+    // Simpler: fill based on phase within cycle
+    dots.appendChild(d);
+  }
+}
+
+function pomPlaySound(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type='sine';osc.frequency.setValueAtTime(880,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440,ctx.currentTime+0.3);
+    gain.gain.setValueAtTime(0.3,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.5);
+  }catch(e){}
+}
+
+function updatePomSubjects(){
+  const sel=document.getElementById('pomSubjectSelect');
+  const val=sel.value;
+  sel.innerHTML='<option value="">— Select subject to focus on —</option>';
+  state.subjects.forEach(s=>{
+    const opt=document.createElement('option');
+    opt.value=s.id;opt.textContent=s.name;
+    sel.appendChild(opt);
+  });
+  sel.value=val;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+function init(){
+  // Set today as default start
+  const si=document.getElementById('startDateInput');
+  si.value=todayStr();
+  si.min=todayStr();
+  document.getElementById('dateInput').min=todayStr();
+
+  load();
+  applyTheme();
+  setQuote();
+  renderSubjects();
+  pomInit();
+  updatePomSubjects();
+
+  // Rotate quote every 30s
+  setInterval(setQuote,30000);
+}
+
+init();
+</script>
+</body>
+</html>
